@@ -16,6 +16,9 @@ SILE.outputters.libtexpdf = {
     -- We don't do anything yet because this commits us to a page size.
   end,
   _init = ensureInit,
+  reset = function()
+    started = false
+  end,
   newPage = function()
     ensureInit()
     pdf.endpage()
@@ -25,6 +28,8 @@ SILE.outputters.libtexpdf = {
     if not started then return end
     pdf.endpage()
     pdf.finish()
+    started = false
+    lastkey = nil
   end,
   setColor = function(self, color)
     ensureInit()
