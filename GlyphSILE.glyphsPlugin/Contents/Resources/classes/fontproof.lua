@@ -28,10 +28,8 @@ function fontproof:init()
   self:loadPackage("lorem")
   self:loadPackage("specimen")
   self:loadPackage("rebox")
-  self:loadPackage("features")
   self:loadPackage("fontprooftexts")
   self:loadPackage("fontproofgroups")
-  self:loadPackage("gutenberg-client")
   SILE.settings.set("document.parindent",SILE.nodefactory.zeroGlue)
   SILE.settings.set("document.spaceskip")
   self.pageTemplate.firstContentFrame = self.pageTemplate.frames["content"]
@@ -153,7 +151,8 @@ end
 
 local function processtext (str)
   local newstr = str
-  local temp = str[1]
+  local temp = str
+  while type(temp) == "table" do temp = temp[1] end
   if string.sub(temp,1,5) == "text_" then
     textname = string.sub(temp,6)
     if SILE.scratch.fontproof.texts[textname] ~= nil then
@@ -179,25 +178,7 @@ SILE.registerCommand("proof", function (options, content)
   proof.family, proof.filename = fontsource(options.family, options.filename)
   for i = 1, #proof.sizes do
     SILE.settings.temporarily(function()
-      local fontoptions ={ family = proof.family, filename = proof.filename, size = proof.sizes[i] }
-      -- Pass on some options from \proof to \font.
-      local tocopy = { "language"; "direction"; "script" }
-      for i = 1,#tocopy do
-        if options[tocopy[i]] then fontoptions[tocopy[i]] = options[tocopy[i]] end
-      end
-      -- Add feature options
-      if options.featuresraw then fontoptions.features = options.featuresraw end
-      if options.features then
-        for i in SU.gtoke(options.features, ",") do
-          if i.string then
-            local feat = {}
-            _,_,k,v = i.string:find("(%w+)=(.*)")
-            feat[k] = v
-            SILE.call("add-font-feature", feat, {})
-          end
-        end
-      end
-      SILE.Commands["font"](fontoptions, {})
+      SILE.Commands["font"]({ family = proof.family, filename = proof.filename, size = proof.sizes[i] }, {})
       SILE.call("raggedright",{},procontent)
     end)
   end
@@ -210,6 +191,7 @@ SILE.registerCommand("pattern", function(options, content)
   format = options.format or "table"
   size = options.size or SILE.scratch.fontproof.testfont.size
   cont = processtext(content)[1]
+  while type(cont) == "table" do cont = cont[1] end
   paras = {}
   if options.heading then SILE.call("subsection", {}, {options.heading})
                      else SILE.call("bigskip") end

@@ -4,6 +4,8 @@ local cursorX = 0
 local cursorY = 0
 local font = 0
 local started = false
+local lastkey
+
 local function ensureInit ()
   if not started then
     pdf.init(SILE.outputFilename, SILE.documentState.paperSize[1],SILE.documentState.paperSize[2])
@@ -16,9 +18,6 @@ SILE.outputters.libtexpdf = {
     -- We don't do anything yet because this commits us to a page size.
   end,
   _init = ensureInit,
-  reset = function()
-    started = false
-  end,
   newPage = function()
     ensureInit()
     pdf.endpage()
