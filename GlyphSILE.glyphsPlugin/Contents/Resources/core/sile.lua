@@ -19,7 +19,7 @@ SILE.scratch = {}
 SILE.length = require("core/length")
 require("core/parserbits")
 require("core/measurements")
-require("core/baseclass")
+require("core/baseclassx")
 SILE.nodefactory = require("core/nodefactory")
 require("core/settings")
 require("core/inputs-texlike")

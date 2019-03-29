@@ -115,12 +115,19 @@ local stringToTypeset
 local fontsize
 -- local mode
 
-doGlyphSILE = function(s, v, fs, m)
+doGlyphSILE = function(s, v, fs, m, shaper)
   stringToTypeset = s
   mode = m
   if (not mode) then
      print("DoGlyphSILE called without mode hash?")
      return
+  end
+  if shaper == 1 then
+    print("Running with OT shaper")
+    SILE.settings.set("harfbuzz.subshapers", "ot,fallback")
+  else
+    print("Running with CoreText shaper")
+    SILE.settings.set("harfbuzz.subshapers", "coretext,fallback")
   end
   fontsize = fs
   SILE.fontCache = {}
