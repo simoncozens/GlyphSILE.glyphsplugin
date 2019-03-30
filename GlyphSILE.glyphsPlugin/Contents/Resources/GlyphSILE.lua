@@ -115,7 +115,7 @@ local stringToTypeset
 local fontsize
 -- local mode
 
-doGlyphSILE = function(s, v, fs, m, shaper)
+doGlyphSILE = function(s, v, fs, shaper, m)
   stringToTypeset = s
   mode = m
   if (not mode) then
